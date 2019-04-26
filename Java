@@ -1,0 +1,240 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.*;
+import java.io.*;
+import java.sql.*;
+import java.util.*;
+import java.io.RandomAccessFile.*;
+import java.lang.*;
+import java.lang.String;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import javax.swing.JOptionPane;
+
+
+public class Loader {
+    //---------------------------- Declarations ----------------------------
+    public static char condition;
+    public static int j=0,ascii=0,ascii2=0,asciiint,asciiint2,binaryint,binaryint2,finalbinaryint,decimaladdress;
+    public static byte[] asciiArray;
+    public static int inc=0;
+    public static int outputArraySize=0;
+    public static String outputArray[] = new String[20];
+    public static String finalString="",hexadecimalAdress="",jop="";
+    public static String finalStatement="Empty";
+    public static String statement;
+    public static String read;
+    public static String text="D:\\Work\\System Programming Loader Project\\Input.txt";
+    public static String text2="D:\\Work\\System Programming Loader Project\\Output.txt";
+    public static byte firstByte;
+    public static byte secondByte;
+    public static byte finalByte;
+    //--------------------------------------------------------
+    
+    public static void main(String[] argv) throws FileNotFoundException, IOException{
+        //---------------------------- Declarations ----------------------------
+        int x11=0,k=0;
+        char x1;
+        String progName,num1,num2,output,objFileProgName="Nothing";
+        //--------------------------------------------------------------
+        progName=JOptionPane.showInputDialog(null, "Enter The Program Name :");
+        File myfile =new File(text);
+        //"ra" allows you to move around a file and read from it or write to it as you please
+        RandomAccessFile ra=new RandomAccessFile(myfile,"r");
+        //The charAt() method returns the character at the specified index in a string
+        read=ra.readLine();
+        if(read.charAt(0)=='H'){
+        //Substring extracts a set number of chars ,
+        //with the end being +1 cause it's not taken into account
+            objFileProgName=read.substring(1,7);
+        //---------------------------- Counter initialization ----------------------------
+            String addressstring=read.substring(7,11);
+            decimaladdress=Integer.parseInt(addressstring,16);
+            System.out.println("decimal "+decimaladdress);
+            hexadecimalAdress=Integer.toHexString(decimaladdress);
+        //--------------------------------------------------------
+            System.out.println("Name in Object file is : "+objFileProgName);
+        }
+            
+            
+            
+        //---------------------------- Checking file name ----------------------------
+        if(progName.compareTo(objFileProgName)==0){
+        JOptionPane.showMessageDialog(null, "Correct Program Name!");
+        System.out.println("---------------------------------");
+        System.out.println("Steps Are As Followed :");
+        System.out.println("---------------------------------");
+        //---------------------------- Storing file into read ----------------------------
+        String End="";
+        End=read;
+        while(End.charAt(0)!='E'){
+        End=ra.readLine();
+        read+=End;
+        }
+        ra.close();
+        //--------------------------------------------------------
+        System.out.println("Entering Extraction");
+            stringExtract(read);
+            System.out.println("Output Complete");
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Invalid Program Name!");
+            ra.close();
+        }
+        }
+    public static void stringExtract(String readSent) throws IOException{
+        PrintWriter writer = new PrintWriter(text2);
+        //---------------------------- For loop for lines ----------------------------
+        for(int i=17;i<(readSent.length()-1);i=(j)){
+            System.out.println("entered first for");
+            if(readSent.charAt(i)=='T'){
+            i+=9;
+        //---------------------------- for loop for Statements ----------------------------
+            for(j=i ;readSent.charAt(j)!='T' && (j+6)<((readSent.length()-1)); j+=2){
+                    System.out.println("j is "+j);
+                    System.out.println("i is "+i);
+                    System.out.println("Entered 2nd for loop");
+                    finalString=readSent.substring(j,j+2);
+                    System.out.println("string is "+finalString);
+                    //---------------------------- Character conversion into ascii code ----------------------------
+                    chartoascii(finalString);
+                    chartoascii2(finalString);
+                    //---------------------------- Ascii code to binary ----------------------------
+                    binary(asciiint);
+                    binary2(asciiint2);
+                    //---------------------------- Adding the two bytes together ----------------------------
+                    addition();
+                    //---------------------------- Hexa Address counter ----------------------------
+                    String hexadecimalAdress=Integer.toHexString(decimaladdress);
+                    System.out.println("final binary int is "+finalbinaryint);
+                    writer.println("statement "+finalString+" which is "+finalbinaryint+" in binary and the address of it is "+hexadecimalAdress);
+                    System.out.println("-------------OUTPUT COMPLETE-------------");
+                    decimaladdress++;
+                    finalString="";
+                   }
+                System.out.println("exited 2nd for");
+            }
+            else{
+                writer.close();
+                break;
+            }
+    }
+    JOptionPane.showMessageDialog(null, "Output Success At  ("+text2+")");
+    }
+    public static void chartoascii(String finalS){
+        System.out.println("------- Char to ascii 1 ----------");
+        //---------------------------- char to ascii ----------------------------
+        char a=finalS.charAt(0);
+        firstByte = (byte) a;
+        //---------------------------- -48 part ----------------------------
+        firstByte=(byte) (firstByte-48);
+        if(firstByte>10){
+        firstByte=(byte) (firstByte-7);
+        }
+        System.out.println("first byte after = "+firstByte);
+        //---------------------------- Storing ----------------------------
+        asciiint = (int) firstByte;
+        System.out.println("ascii int is "+asciiint);
+        System.out.println("-------Out of Char to ascii 1 ----------");
+        
+    }
+    public static void chartoascii2(String finalS){
+        
+        System.out.println("------- Char to ascii 2 ----------");
+        char a=finalS.charAt(1);
+        secondByte = (byte) a;
+        secondByte=(byte) (secondByte-48);
+        if(secondByte>10){
+        secondByte=(byte) (secondByte-7);
+        }
+        System.out.println("first byte after = "+secondByte);
+        asciiint2 = (int) secondByte;
+        System.out.println("ascii int is "+asciiint2);
+        
+        System.out.println("-------Out of Char to ascii 2 ----------");
+        
+    }
+    public static void binary(int no){
+        //------------------------------------------------------------------------------------
+        //---------------------------- no1 to check if the number is already Zero 
+        //---------------------------- hence it doesn't require parsing phrases
+        //------------------------------------------------------------------------------------
+        int no1=no;
+        StringBuilder result = new StringBuilder();
+    int i =0;
+    //---------------------------- binary conversion ----------------------------
+    while (no > 0){
+        result.append(no%2);
+        i++;
+        no = no/2;
+    }
+    //--------------------------------------------------------
+    
+    //---------------------------- Storing into s string ----------------------------
+    String s="";
+    char c;
+    for(int j=0 ; j<i ; j++){
+        c=(result.charAt(j));
+        s=s + "" +c;
+    }
+    //---------------------------- Reversing s string into reverse string ----------------------------
+    String reverse = "";
+    for(i = s.length() - 1; i >= 0; i--)
+        {
+            reverse = reverse + s.charAt(i);
+        }
+        System.out.println("reverse is "+reverse);
+    //--------------------------------------------------------
+        
+    //---------------------------- checking if it's already Zero ----------------------------
+        if(no1>0){
+    binaryint= Integer.parseInt(reverse);
+    //---------------------------- Shifting 1st binary ----------------------------
+    binaryint = binaryint*10000;
+    //--------------------------------------------------------
+        }
+        else
+        //---------------------------- if it is zero ----------------------------
+            binaryint=0;
+        //--------------------------------------------------------
+        System.out.println("binary int 1 is "+binaryint);
+    }
+    public static void binary2(int no){
+        int no1=no;
+        StringBuilder result = new StringBuilder();
+    int i =0;
+    while (no > 0){
+        result.append(no%2);
+        i++;
+        no = no/2;
+    }
+    
+    String s="";
+    char c;
+    for(int j=0 ; j<i ; j++){
+        c=(result.charAt(j));
+        s=s + "" +c;
+    }
+    String reverse = "";
+    for(i = s.length() - 1; i >= 0; i--)
+        {
+            reverse = reverse + s.charAt(i);
+        }
+    System.out.println("reverse2 is "+reverse);
+        
+    reverse = "0000"+reverse;
+    if(no1>0){
+    binaryint2= Integer.parseInt(reverse);
+    }
+        else
+            binaryint2=0;
+        System.out.println("binary int 2 is "+binaryint2);
+    }
+    public static void addition(){
+    finalbinaryint=binaryint+binaryint2;
+        System.out.println("addition "+finalbinaryint);
+    }
+}
